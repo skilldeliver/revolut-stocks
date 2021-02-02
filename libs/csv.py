@@ -26,10 +26,10 @@ def export_to_csv(list_object, csv_file, fieldnames):
             writer.writerow(elements)
 
 
-def export_statements(filename, statements):
+def export_statements(file_path, statements):
     export_to_csv(
         statements,
-        filename,
+        file_path,
         [
             "trade_date",
             "settle_date",
@@ -68,14 +68,13 @@ def export_app8_part1(filename, purchases):
     )
 
 
-def export_app5_table2(filename, sales):
+def export_app5_table2(file_path, sales):
     sales = [
         {
             **{
                 k: v
                 for k, v in sale.items()
-                if k
-                not in ["symbol", "avg_purchase_price", "sell_exchange_rate", "profit_in_currency", "loss_in_currency"]
+                if k not in ["symbol", "avg_purchase_price", "sell_exchange_rate", "profit_in_currency", "loss_in_currency"]
             },
             **{"code": 508},
         }
@@ -83,26 +82,27 @@ def export_app5_table2(filename, sales):
     ]
     export_to_csv(
         sales,
-        filename,
+        file_path,
         ["code", "trade_date", "sell_price", "purchase_price", "profit", "loss"],
     )
 
 
-def export_app8_part4_1(filename, dividends):
+def export_app8_part4_1(file_path, dividend_taxes):
     dividends = [
         {
-            **{k: v for k, v in dividend.items() if k not in ["symbol"]},
+            **{k: v for k, v in dividend_tax.items() if k not in ["symbol"]},
             **{"profit_code": 8141, "tax_code": 1},
             **{
-                "gross_profit_amount": dividend["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
-                "paid_tax_amount": dividend["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
-                "owe_tax": dividend["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+                "gross_profit_amount": dividend_tax["gross_profit_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+                "paid_tax_amount": dividend_tax["paid_tax_amount"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
+                "owe_tax": dividend_tax["owe_tax"].quantize(decimal.Decimal(NAP_DIGIT_PRECISION)),
             },
         }
-        for dividend in dividends
+        for dividend_tax in dividend_taxes
     ]
+
     export_to_csv(
         dividends,
-        filename,
+        file_path,
         ["stock_symbol", "company", "profit_code", "tax_code", "gross_profit_amount", "paid_tax_amount", "owe_tax"],
     )
